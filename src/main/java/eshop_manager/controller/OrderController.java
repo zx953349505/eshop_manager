@@ -1,0 +1,135 @@
+package eshop_manager.controller;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import eshop_manager.biz.OrderBiz;
+import eshop_manager.entity.OrderInfo;
+import eshop_manager.util.MyAnnotation.CheckLoginRequired;
+
+
+@Controller
+@RequestMapping("/order")
+public class OrderController {
+	@Autowired
+	private OrderBiz orderBiz;
+	
+	@RequestMapping("/selectSendOrder")	
+	@CheckLoginRequired
+	public @ResponseBody int selectSendOrder()throws Exception{	
+		int count=orderBiz.selectOrderList(1, 0, 0, 1);
+		return count;
+	}
+	@RequestMapping("/selectPayOrder")	
+	@CheckLoginRequired
+	public @ResponseBody int selectPayOrder()throws Exception{
+		int count=orderBiz.selectOrderList(0, 0, 0, 1);
+		return count;
+	}
+	@RequestMapping("/selectCompleteOrder")	
+	@CheckLoginRequired
+	public @ResponseBody int selectCompleteOrder()throws Exception{
+		int count=orderBiz.selectOrderList(1, 1, 1, 1);
+		return count;
+	}
+	@RequestMapping("/selectCancelOrder")	
+	@CheckLoginRequired
+	public @ResponseBody int selectCancelOrder()throws Exception{
+		int count=orderBiz.selectOrderList(1, 1, 1, 0);
+		return count;
+	}
+	@RequestMapping("/selectSale")
+	@CheckLoginRequired
+	public @ResponseBody double selectSale()throws Exception{
+		double sum=orderBiz.selectOrderPrice();
+		return sum;
+	}
+	
+	@RequestMapping("/selectOrderList")
+	@CheckLoginRequired
+	public ModelAndView selectOrderList(
+			
+			@RequestParam(value="order_id",required=false) String order_id ,
+			@RequestParam(value="person",required=false) String person ,
+			@RequestParam(value="order_date",required=false) String order_date ,
+			@RequestParam(value="order_status",required=false) Integer order_status ,
+			@RequestParam(value="currentPage",required=false,defaultValue="1") int currentPage
+			
+			)throws Exception{
+		
+		ModelAndView model=new ModelAndView();
+		int pageSize=10;
+		int totalCount=orderBiz.totalOrderCount();
+		int totalPage=totalCount%pageSize==0?totalCount/pageSize:totalCount/pageSize+1;
+		List<OrderInfo> orderList=orderBiz.queryOrderList(order_id, person, order_date, order_status, currentPage, pageSize);
+		model.addObject("orderList", orderList);
+		model.addObject("totalCount", totalCount);
+		model.addObject("currentPage", currentPage);
+		model.addObject("totalPage", totalPage);
+		model.setViewName("orderlist");
+		
+		return model;
+	}
+	
+	@RequestMapping("/selectOrderInfo/{order_id}")
+	@CheckLoginRequired
+	public ModelAndView selectOrderInfo(			
+			@PathVariable(value="order_id") String order_id			
+			)throws Exception{
+		System.out.println(order_id);
+		ModelAndView model=new ModelAndView();
+		OrderInfo orderInfo=orderBiz.selectOrderInfo(order_id);
+		model.addObject("orderInfo", orderInfo);
+		model.setViewName("orderinfo");
+		
+		return model;
+	}
+	
+	@RequestMapping("/deleteSingleOrder/{order_id}")
+	@CheckLoginRequired
+	public @ResponseBody Map<String, Object> deleteOrder(			
+			@PathVariable(value="order_id") String order_id			
+			)throws Exception{
+		
+		Map<String, Object> resultMap=new HashMap<String, Object>();
+		orderBiz.deleteSingleOrder(order_id);;
+		resultMap.put("status", 200);
+		
+		return resultMap;
+	}
+	
+	@RequestMapping("/deleteOrCancelManyOrder")
+	@CheckLoginRequired
+	public @ResponseBody Map<String, Object> deleteOrCancelManyOrder(			
+			@RequestParam(value="orderStatus",required=false) Integer orderStatus,
+			@RequestParam(value="bookIdStr",required=false) String bookIdStr
+			)throws Exception{
+		
+		Map<String, Object> resultMap=new HashMap<String, Object>();
+		
+		System.out.println("订单号String："+bookIdStr);
+		List<String> orderIdList=Arrays.asList(bookIdStr.split(","));
+		System.out.println("订单号List集合："+orderIdList);
+		
+		if (orderStatus!=null && orderStatus==0) {
+			orderBiz.deleteManyOrder(orderIdList);
+			resultMap.put("status", 200);
+		}else if(orderStatus!=null && orderStatus==-1){
+			orderBiz.cancelManyOrder(orderIdList);
+			resultMap.put("status", 200);
+		}
+		
+		return resultMap;
+	}
+	
+}

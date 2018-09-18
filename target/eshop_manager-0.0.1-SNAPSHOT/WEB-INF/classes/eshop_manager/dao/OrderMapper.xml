@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.OrderMapper">
+
+	<!-- 开启本mapper下的二级缓存 -->
+	<cache/>
+	<select id="selectOrderList" parameterType="map" resultType="int">
+		select count(*) from tb_order
+		<if test="status==1">
+		 where status_pay=#{status_pay}
+		 and status_send=#{status_send} and status_receive=#{status_receive} and status=1
+		</if>
+		<if test="status==0">
+		 where status=0
+		</if>
+	</select>
+	<select id="selectOrderPrice" resultType="double">
+		select sum(order_price) from tb_order
+		where status_pay=1 and status_send=1 and status_receive=1 and status=1
+		and DATE_FORMAT(order_date,'%Y%m')=DATE_FORMAT(NOW(),'%Y%m')
+	</select>
+</mapper>

@@ -1,0 +1,33 @@
+package eshop_manager.biz;
+
+import java.util.List;
+
+import eshop_manager.entity.BookInfo;
+
+
+public interface BookBiz {
+	/**
+	 * 通过条件查询书籍
+	 * @return
+	 */
+	List<BookInfo> selectBookByTypeID(String type_id,String book_name,String book_author,int status,int currentPage,int pageSize);
+	/**
+	 * 查询总记录数
+	 * @return
+	 */
+	int selectTotalCount(String type_id,String book_name,String book_author,int status);
+	
+	/**
+	 * 添加图书
+	 * @param bookInfo
+	 * @return
+	 */
+	int addBook(BookInfo bookInfo);
+
+	/**
+	 * 
+	 * @param book_id
+	 * @param picList
+	 */
+	void insertBookPicList(int book_id,List<String> picList);
+}

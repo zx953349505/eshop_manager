@@ -1,0 +1,27 @@
+package eshop_manager.biz.impl;
+
+import java.util.List;
+
+import eshop_manager.biz.TypeBiz;
+import eshop_manager.dao.TypeMapper;
+import eshop_manager.entity.TypeInfo;
+import eshop_manager.util.DaoProxy;
+
+
+
+public class TypeBizImpl implements TypeBiz {
+	private TypeMapper typeDao=(TypeMapper) DaoProxy.getInstance(TypeMapper.class);
+	
+	public List<TypeInfo> selectTypeAll() {
+		// TODO Auto-generated method stub
+		return typeDao.selectTypeAll();
+	}
+
+	@Override
+	public List<TypeInfo> selectType() {
+		// TODO Auto-generated method stub
+		return typeDao.selectType();
+	}
+
+
+}

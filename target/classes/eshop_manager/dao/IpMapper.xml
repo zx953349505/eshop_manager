@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.IpMapper">
+
+	<!-- 开启本mapper下的二级缓存
+	<cache/> -->
+	<select id="selectIpInfo" resultType="eshop_manager.entity.IpInfo">
+		select * from tb_ip order by time desc limit 5
+	</select>
+</mapper>

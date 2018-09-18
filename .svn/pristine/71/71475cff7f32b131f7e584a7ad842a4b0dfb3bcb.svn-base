@@ -1,0 +1,46 @@
+package eshop_manager.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import eshop_manager.biz.OrderBiz;
+import eshop_manager.biz.impl.OrderBizImpl;
+import eshop_manager.util.MyAnnotation.CheckLoginRequired;
+
+@Controller
+@RequestMapping("/order")
+public class OrderController {
+	private OrderBiz orderBiz=new OrderBizImpl();
+	
+	@RequestMapping("/selectSendOrder")	
+	@CheckLoginRequired
+	public @ResponseBody int selectSendOrder()throws Exception{	
+		int count=orderBiz.selectOrderList(1, 0, 0, 1);
+		return count;
+	}
+	@RequestMapping("/selectPayOrder")	
+	@CheckLoginRequired
+	public @ResponseBody int selectPayOrder()throws Exception{
+		int count=orderBiz.selectOrderList(0, 0, 0, 1);
+		return count;
+	}
+	@RequestMapping("/selectCompleteOrder")	
+	@CheckLoginRequired
+	public @ResponseBody int selectCompleteOrder()throws Exception{
+		int count=orderBiz.selectOrderList(1, 1, 1, 1);
+		return count;
+	}
+	@RequestMapping("/selectCancelOrder")	
+	@CheckLoginRequired
+	public @ResponseBody int selectCancelOrder()throws Exception{
+		int count=orderBiz.selectOrderList(1, 1, 1, 0);
+		return count;
+	}
+	@RequestMapping("/selectSale")
+	@CheckLoginRequired
+	public @ResponseBody double selectSale()throws Exception{
+		double sum=orderBiz.selectOrderPrice();
+		return sum;
+	}
+}

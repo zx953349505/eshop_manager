@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.BookMapper">
+
+	<!-- 开启本mapper下的二级缓存 -->
+	<cache/>
+	<sql id="selectBookWhere">
+		<where>
+			<if test="book_name!=null and book_name!=''">
+				<bind name="newbook_name" value="'%'+book_name+'%'"/>
+				and book_name like #{newbook_name}
+			</if>
+			<if test="book_author!=null and book_author!=''">
+				<bind name="newbook_author" value="'%'+book_author+'%'"/>
+				and book_author like #{newbook_author}
+			</if>
+			<if test="status!=-1">
+				and status=#{status}
+			</if>
+			<if test="type_id!=-1">
+				and (t1.type_id=#{type_id} or t1.type_id in (select t3.type_id from tb_type t3 where parent_id=#{type_id}) )
+			</if>
+		</where>
+	</sql>
+	<resultMap type="eshop_manager.entity.BookInfo" id="book">
+		<id column="book_id" property="book_id"/>
+		<result column="book_name" property="book_name"/>
+		<result column="book_logo_small" property="book_logo_small"/>
+		<result column="book_logo_big" property="book_logo_big"/>
+		<result column="book_name" property="book_name"/>
+		<result column="book_price" property="book_price"/>
+		<result column="book_price_old" property="book_price_old"/>
+		<result column="book_description" property="book_description"/>
+		<result column="book_author" property="book_author"/>
+		<result column="book_press" property="book_press"/>
+		<result column="book_date" property="book_date"/>
+		<result column="is_garbage" property="is_garbage"/>
+		<result column="status" property="status"/>
+		<result column="is_new" property="is_new"/>
+		<result column="is_hot" property="is_hot"/>
+		<result column="type_id" property="type_id"/>
+		<result column="store_count" property="store_count"/>
+		<association property="typeInfo" javaType="eshop_manager.entity.TypeInfo" >
+			<id column="type_id" property="type_id" /> 
+			<result column="type_name" property="type_name" />
+			<result column="parent_id" property="parent_id" />
+		</association>
+	</resultMap>
+	<select id="selectBookByTypeID" resultMap="book" parameterType="map">
+		SELECT t1.book_id,t1.book_name,t1.book_author,t1.book_price,t1.status,t1.is_new,t1.is_hot,t1.type_id,t1.store_count,t2.type_name
+		FROM tb_book t1 inner join tb_type t2 on t1.type_id=t2.type_id
+		<include refid="selectBookWhere" />
+		limit #{currentPage},#{pageSize}
+	</select>
+	
+	<select id="selectTotalCount" resultType="int" parameterType="map">
+		select count(*) from tb_book t1
+		<include refid="selectBookWhere" />
+	</select>
+	
+	<insert id="addBook" parameterType="eshop_manager.entity.BookInfo" flushCache="true">
+		<selectKey keyProperty="book_id" resultType="int" order="AFTER">
+			SELECT LAST_INSERT_ID() 
+		</selectKey>
+		INSERT INTO tb_book(book_name,book_logo_small,book_logo_big,book_price,book_price_old,
+		book_author,book_description,book_press,store_count,type_id,book_date,status,is_new,is_hot)
+		VALUES(#{book_name},#{book_logo_small},#{book_logo_big},#{book_price},#{book_price_old},#{book_author},
+		#{book_description},#{book_press},#{store_count},#{type_id},now(),#{status},#{is_new},#{is_hot})
+	</insert>
+	
+	<insert id="insertBookPicList" parameterType="map" flushCache="true">
+		INSERT INTO tb_book_pic(book_id,pic_name)
+		VALUES
+		<foreach collection="picList" separator="," item="picName">
+			(#{bookId},#{picName})
+		</foreach>	
+	</insert>
+	
+	<update id="deleteBook" parameterType="int" flushCache="true">
+		UPDATE tb_book SET is_garbage=1 WHERE book_id=#{bookId}
+	</update>
+	
+	<select id="selectBookById" resultMap="book" parameterType="int">
+		SELECT t1.*, t2.parent_id FROM tb_book t1 
+		LEFT JOIN tb_type t2 ON t1.type_id=t2.type_id WHERE book_id=#{bookId}
+	</select>
+	
+	<select id="selectGarbage" resultMap="book" parameterType="map">
+		SELECT book_id, book_name, book_price, type_name FROM tb_book t1
+		INNER JOIN tb_type t2 ON t1.type_id=t2.type_id WHERE is_garbage=1
+		LIMIT #{start}, #{pageSize}
+	</select>
+	
+	<update id="returnGarbage" parameterType="java.util.List" flushCache="true">		
+		UPDATE tb_book SET is_garbage=0 WHERE book_id IN 
+		<foreach collection="list" item="bookId" open="(" separator="," close=")">
+			#{bookId}			
+		</foreach>			
+	</update>
+	
+	<delete id="deleteGarbage" parameterType="java.util.List" flushCache="true">
+		DELETE FROM tb_book WHERE book_id IN
+		<foreach collection="list" item="bookId" open="(" separator="," close=")">
+				#{bookId}			
+		</foreach>	
+	</delete>	
+	
+	<select id="totalGarbageCount" resultType="int">
+		SELECT COUNT(book_id) FROM tb_book t1 INNER JOIN tb_type t2 ON t1.type_id=t2.type_id
+	</select>
+	
+	<select id="selectBookPicList" resultType="string" parameterType="int">
+		SELECT pic_name FROM tb_book_pic WHERE book_id=#{bookId}
+	</select>
+	
+	<update id="UpateBookIsGarbage" parameterType="map" flushCache="true">
+		<if test="is_garbage==0">
+			UPDATE tb_book SET is_garbage=0 WHERE book_id IN 
+			<foreach collection="bookIdList" item="bookId" open="(" separator="," close=")">
+				#{bookId}			
+			</foreach>
+		</if>
+		<if test="is_garbage==1">
+			UPDATE tb_book SET is_garbage=1 WHERE book_id IN 
+			<foreach collection="bookIdList" item="bookId" open="(" separator="," close=")">
+				#{bookId}			
+			</foreach>
+		</if>				
+	</update>
+	
+	<update id="UpateBookStatus" parameterType="map" flushCache="true">
+		<if test="status==0">
+			UPDATE tb_book SET status=0 WHERE book_id IN 
+			<foreach collection="bookIdList" item="bookId" open="(" separator="," close=")">
+				#{bookId}			
+			</foreach>
+		</if>
+		<if test="status==1">
+			UPDATE tb_book SET status=1 WHERE book_id IN 
+			<foreach collection="bookIdList" item="bookId" open="(" separator="," close=")">
+				#{bookId}			
+			</foreach>
+		</if>				
+	</update>
+	
+	<update id="UpateBookIsNew" parameterType="map" flushCache="true">
+		<if test="is_new==0">
+			UPDATE tb_book SET is_new=0 WHERE book_id IN 
+			<foreach collection="bookIdList" item="bookId" open="(" separator="," close=")">
+				#{bookId}			
+			</foreach>
+		</if>
+		<if test="is_new==1">
+			UPDATE tb_book SET is_new=1 WHERE book_id IN 
+			<foreach collection="bookIdList" item="bookId" open="(" separator="," close=")">
+				#{bookId}			
+			</foreach>
+		</if>				
+	</update>
+	
+	<update id="UpateBookIsHot" parameterType="map" flushCache="true">
+		<if test="is_hot==0">
+			UPDATE tb_book SET is_hot=0 WHERE book_id IN 
+			<foreach collection="bookIdList" item="bookId" open="(" separator="," close=")">
+				#{bookId}			
+			</foreach>
+		</if>
+		<if test="is_hot==1">
+			UPDATE tb_book SET is_hot=1 WHERE book_id IN 
+			<foreach collection="bookIdList" item="bookId" open="(" separator="," close=")">
+				#{bookId}			
+			</foreach>
+		</if>				
+	</update>
+	
+	
+	
+	
+</mapper>

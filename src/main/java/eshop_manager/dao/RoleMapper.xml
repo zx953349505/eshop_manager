@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.RoleMapper">
+
+	<!-- 开启本mapper下的二级缓存
+	<cache/> -->
+	<select id="selectRoleList" resultType="eshop_manager.entity.RoleInfo">
+		select * from tb_role
+	</select>
+	<insert id="addRole" parameterType="eshop_manager.entity.RoleInfo">
+		<selectKey keyProperty="role_id" resultType="java.lang.Integer" order="AFTER">
+			SELECT LAST_INSERT_ID() 
+		</selectKey>
+		insert into tb_role(role_name) values(#{role_name})
+	</insert>
+	<delete id="deleteRole" parameterType="int">
+		delete from tb_role where role_id=#{id}
+	</delete>
+	<insert id="addRolePermission" parameterType="map">
+		insert into tb_role_permission(role_id,permission_id) values
+		<foreach collection="perList" separator="," item="perName">
+			(#{role_id},#{perName})
+		</foreach>
+	</insert>
+</mapper>

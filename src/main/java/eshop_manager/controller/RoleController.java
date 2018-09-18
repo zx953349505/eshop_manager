@@ -1,0 +1,65 @@
+package eshop_manager.controller;
+
+import java.util.Arrays;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import eshop_manager.biz.PermissionBiz;
+import eshop_manager.biz.RoleBiz;
+import eshop_manager.entity.PermissionInfo;
+import eshop_manager.entity.RoleInfo;
+import eshop_manager.util.MyAnnotation.CheckLoginRequired;
+
+@Controller
+@RequestMapping("/role")
+public class RoleController {
+	@Autowired
+	private RoleBiz roleBiz;
+	@Autowired
+	private PermissionBiz permissionBiz;
+	@RequestMapping("/rolePage")
+	@CheckLoginRequired
+	public ModelAndView rolePage() throws Exception{	
+		ModelAndView modelAndView=new ModelAndView();
+		List<RoleInfo> roleList=roleBiz.selectRoleList();
+		List<PermissionInfo> perList=permissionBiz.selectPerList();
+		modelAndView.addObject("perList", perList);
+		modelAndView.addObject("roleList", roleList);
+		modelAndView.setViewName("pmmsrole");
+		return modelAndView;
+	}
+	@RequestMapping(value="/deleteRole",method={RequestMethod.POST})
+	@CheckLoginRequired
+	public @ResponseBody int deleteRole(
+			@RequestParam("role_id") int role_id
+			)throws Exception{	
+		System.out.println("ajax´«²ÎÊÇ"+role_id);
+		try {
+			roleBiz.deleteRole(role_id);
+			return 200;
+		} catch (Exception e) {
+			return 500;
+		}
+	}
+	
+	@RequestMapping("/addRole")
+	@CheckLoginRequired
+	public String addPer(
+			HttpServletRequest request,
+			@RequestParam("role_name") String role_name,
+			Integer[] per_id
+			)throws Exception{
+		List<Integer> perList=Arrays.asList(per_id);
+		roleBiz.addRole(role_name, perList);
+		return "redirect:/role/rolePage";
+	}
+}

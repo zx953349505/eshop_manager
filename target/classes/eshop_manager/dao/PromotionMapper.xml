@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.PromotionMapper">
+
+	<!-- 开启本mapper下的二级缓存
+	<cache/> -->
+	<select id="selectPromotionInfo" resultType="eshop_manager.entity.PromotionInfo">
+		select * from tb_promotion
+	</select>
+	<delete id="deleteProByName" parameterType="string">
+		delete from tb_promotion where promotion_context=#{name}
+	</delete>
+	<insert id="addPromotion" parameterType="eshop_manager.entity.PromotionInfo">
+		insert into tb_promotion(book_id,promotion_context) values (#{book_id},#{promotion_context})
+	</insert>
+</mapper>

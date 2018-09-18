@@ -1,0 +1,35 @@
+package eshop_manager.util;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+import org.apache.ibatis.session.SqlSession;
+
+public class DaoProxy {
+	
+	
+	public static Object getInstance(Class<?> clazz){
+		
+		Object obj=Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, new Myinvocation(clazz));
+	
+	return obj;
+	}
+	private static class Myinvocation implements InvocationHandler{
+		private Class<?> clazz;
+		public Myinvocation(Class<?> clazz){
+			this.clazz=clazz;
+		}
+		public Object invoke(Object proxy, Method method, Object[] args)
+				throws Throwable {
+			// TODO Auto-generated method stub
+			SqlSession session=MySqlSessionFactory.getInstance().getFactory().openSession();
+			Object obj=session.getMapper(clazz);
+			Object returnValue=method.invoke(obj, args);
+			session.commit();
+			session.close();
+			return returnValue;
+		}
+		
+	}
+}

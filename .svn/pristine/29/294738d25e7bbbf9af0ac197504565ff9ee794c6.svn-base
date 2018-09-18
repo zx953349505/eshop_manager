@@ -1,0 +1,57 @@
+package eshop_manager.controller;
+
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+
+
+
+
+
+import eshop_manager.biz.BookBiz;
+import eshop_manager.biz.TypeBiz;
+import eshop_manager.biz.impl.BookBizImpl;
+import eshop_manager.biz.impl.TypeBizImpl;
+import eshop_manager.entity.BookInfo;
+import eshop_manager.entity.TypeInfo;
+
+
+@Controller
+@RequestMapping("/book")
+public class BookController {
+	private BookBiz bookBiz=new BookBizImpl();
+	private TypeBiz typeBiz=new TypeBizImpl();
+	
+	
+	@RequestMapping("/bookManagerPage")	
+	public  ModelAndView bookManagerPage(
+			@RequestParam(value="book_name",required=false) String book_name ,
+			@RequestParam(value="book_author",required=false) String book_author ,
+			@RequestParam(value="type_id",required=false,defaultValue="-1") String type_id ,
+			@RequestParam(value="status",required=false,defaultValue="-1") int status ,
+			@RequestParam(value="currentPage",required=false,defaultValue="1") int currentPage ,
+			@RequestParam(value="pageSize",required=false,defaultValue="10") int pageSize 
+			)throws Exception{
+		ModelAndView modelAndView=new ModelAndView();
+		List<BookInfo> bookList=bookBiz.selectBookByTypeID(type_id, book_name, book_author, status, currentPage, pageSize);
+		List<TypeInfo> typeList=typeBiz.selectTypeAll();
+		int totalCount=bookBiz.selectTotalCount(type_id, book_name, book_author, status);
+		int totalPage=totalCount % pageSize == 0 ? totalCount / pageSize : totalCount / pageSize + 1;
+		modelAndView.addObject("book_name", book_name);
+		modelAndView.addObject("book_author", book_author);
+		modelAndView.addObject("type_id", type_id);
+		modelAndView.addObject("status", status);
+		modelAndView.addObject("bookList", bookList);
+		modelAndView.addObject("typeList", typeList);
+		modelAndView.addObject("currentPage", currentPage);
+		modelAndView.addObject("totalCount", totalCount);
+		modelAndView.addObject("totalPage", totalPage);	
+		modelAndView.setViewName("book_manager");
+		return modelAndView;
+	}
+}

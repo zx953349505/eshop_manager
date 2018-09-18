@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.AdMapper">
+
+	<!-- 开启本mapper下的二级缓存
+	<cache/> -->
+	<select id="selectAdInfo" resultType="AdInfo">
+		select * from tb_ad 
+	</select>
+	<delete id="deleteAdByName" parameterType="string">
+		delete from tb_ad where ad_name=#{name}
+	</delete>
+	<insert id="addAdvertise" parameterType="AdInfo">
+		insert into tb_ad(book_id,ad_name) values (#{book_id},#{ad_name})
+	</insert>
+</mapper>

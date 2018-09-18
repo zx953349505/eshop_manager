@@ -1,0 +1,39 @@
+package eshop_manager.biz.impl;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import eshop_manager.biz.BookBiz;
+import eshop_manager.dao.BookMapper;
+import eshop_manager.entity.BookInfo;
+import eshop_manager.util.DaoProxy;
+
+
+public class BookBizImpl implements BookBiz {
+	private BookMapper bookDao=(BookMapper) DaoProxy.getInstance(BookMapper.class);
+	
+
+	public List<BookInfo> selectBookByTypeID(String type_id,String book_name,String book_author,int status,int currentPage,int pageSize) {
+		// TODO Auto-generated method stub
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put("type_id", type_id);
+		map.put("book_name", book_name);
+		map.put("book_author", book_author);
+		map.put("status", status);
+		map.put("currentPage", (currentPage-1)*pageSize);
+		map.put("pageSize", pageSize);
+		return bookDao.selectBookByTypeID(map);
+	}
+
+	public int selectTotalCount(String type_id,String book_name,String book_author,int status) {
+		// TODO Auto-generated method stub
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put("type_id", type_id);
+		map.put("book_name", book_name);
+		map.put("book_author", book_author);
+		map.put("status", status);
+		return bookDao.selectTotalCount(map);
+	}
+
+}

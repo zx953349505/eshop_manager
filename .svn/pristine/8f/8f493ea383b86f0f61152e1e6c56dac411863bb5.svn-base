@@ -1,0 +1,16 @@
+package eshop_manager.biz.impl;
+
+import eshop_manager.biz.PvBiz;
+import eshop_manager.dao.PvMapper;
+import eshop_manager.util.DaoProxy;
+
+
+public class PvBizImpl implements PvBiz {
+	private PvMapper pvMapper=(PvMapper) DaoProxy.getInstance(PvMapper.class);
+
+	public int selectPvCount() {
+		// TODO Auto-generated method stub
+		return pvMapper.selectPvCount();
+	}
+
+}

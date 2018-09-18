@@ -1,0 +1,255 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>eshop商城</title>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/static/lib/bootstrap/css/bootstrap.css">
+    
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/static/stylesheets/theme.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath }/static/lib/font-awesome/css/font-awesome.css">
+
+    <script src="${pageContext.request.contextPath }/static/lib/jquery-1.7.2.min.js" type="text/javascript"></script>
+
+    <style type="text/css">
+        #line-chart {
+            height:300px;
+            width:800px;
+            margin: 0px auto;
+            margin-top: 1em;
+        }
+        .brand { font-family: georgia, serif; }
+        .brand .first {
+            color: #ccc;
+            font-style: italic;
+        }
+        .brand .second {
+            color: #fff;
+            font-weight: bold;
+        }
+    </style>
+    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="${pageContext.request.contextPath }/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="${pageContext.request.contextPath }/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="${pageContext.request.contextPath }/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="${pageContext.request.contextPath }/assets/ico/apple-touch-icon-57-precomposed.png">
+  </head>
+  <body class=""> 
+  
+	<c:import url="/framework.jsp"></c:import>
+	
+	<div class="content">
+		<div class="header">
+			<div class="stats">
+				<p class="stat">
+					<span class="number">15</span>日
+				</p>
+				<p class="stat">
+					<span class="number">08</span>月
+				</p>
+				<p class="stat">
+					<span class="number">2018</span>年
+				</p>
+			</div>
+
+			<h1 class="page-title">首页</h1>
+		</div>
+
+		<ul class="breadcrumb">
+			<li class="active">首页</li>
+		</ul>
+
+		<div class="container-fluid">
+				<div class="row-fluid">
+
+					<div class="block">
+						<a href="#page-stats" class="block-heading" data-toggle="collapse">统计数据</a>
+						<div id="page-stats" class="block-body collapse in">
+
+							<div class="stat-widget-container">
+								<div class="stat-widget">
+									<div class="stat-button">
+										<p class="title" id="usercount"></p>
+										<a href="/EShopManager/accounts/query.action">
+											<p class="detail">用户数</p>
+										</a>
+									</div>
+								</div>
+
+								<div class="stat-widget">
+									<div class="stat-button">
+										<p class="title" id="sale"></p>
+										<p class="detail">营业额</p>
+									</div>
+								</div>
+
+								<div class="stat-widget">
+									<div class="stat-button">
+										<p class="title" id="onlineuser">0</p>
+										<p class="detail">在线用户数</p>
+									</div>
+								</div>
+
+								<div class="stat-widget">
+									<div class="stat-button">
+										<p class="title">540</p>
+										<p class="detail">pv</p>
+									</div>
+								</div>
+
+								
+
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row-fluid">
+
+					<div class="block">
+						<a href="#page-order-stats" class="block-heading" data-toggle="collapse">订单统计信息</a>
+						<div id="page-order-stats" class="block-body collapse in">
+
+							<div class="stat-widget-container">
+								<div class="stat-widget">
+									<div class="stat-button">
+										<p class="title" id="send"></p>
+										<a href="/EShopManager/orders/query.action?type=1">
+											<p class="detail">待发货订单</p>
+										</a>
+									</div>
+								</div>
+
+								<div class="stat-widget">
+									<div class="stat-button">
+										<p class="title" id="pay"></p>
+										<a href="/EShopManager/orders/query.action?type=2">
+											<p class="detail">待付款订单</p>
+										</a>
+									</div>
+								</div>
+
+								<div class="stat-widget">
+									<div class="stat-button">
+										<p class="title" id="complete"></p>
+										<a href="/EShopManager/orders/query.action?type=3">
+											<p class="detail">已完成订单</p>
+										</a>
+									</div>
+								</div>
+
+								<div class="stat-widget">
+									<div class="stat-button">
+										<p class="title" id="cancel"></p>
+										<a href="/EShopManager/orders/query.action?type=4">
+											<p class="detail">已取消订单</p>
+										</a>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row-fluid">
+					<div class="block span6">
+						<a href="#tablewidget" class="block-heading"
+							data-toggle="collapse">用户统计
+							
+						</a>
+						<div id="tablewidget" class="block-body collapse in">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>用户名</th>
+										<th>邮箱</th>
+										<th>性别</th>
+										<th>状态</th>
+									</tr>
+								</thead>
+								<tbody id="userList">
+								</tbody>
+							</table>
+							<p>
+								<a href="${pageContext.request.contextPath }/user/selectAllUserList.action">More...</a>
+							</p>
+						</div>
+					</div>
+					<div class="block span6">
+						<a href="#tablePV" class="block-heading" data-toggle="collapse">ip统计
+						
+						</a>
+						<div id="tablePV" class="block-body collapse in">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>ip地址</th>
+										<th>访问次数</th>
+									</tr>
+								</thead>
+								<tbody>
+									
+										<tr>
+											<td>127.0.0.1</td>
+											<td>603</td>
+										</tr>
+									
+										<tr>
+											<td>0:0:0:0:0:0:0:1</td>
+											<td>60</td>
+										</tr>
+									
+										<tr>
+											<td>120.236.2.62</td>
+											<td>117</td>
+										</tr>
+									
+										<tr>
+											<td>116.25.227.19</td>
+											<td>3</td>
+										</tr>
+									
+										<tr>
+											<td>182.61.33.130</td>
+											<td>32</td>
+										</tr>
+									
+								</tbody>
+							</table>
+							<p>
+								<a href="${pageContext.request.contextPath }/iplist.action">More...</a>
+							</p>
+						</div>
+					</div>
+				</div>
+	<c:import url="/foot.jsp"/>
+		</div>
+	</div>
+
+
+	<script src="${pageContext.request.contextPath }/static/lib/tooltips.js"></script>
+	<script src="${pageContext.request.contextPath }/static/lib/bootstrap/js/bootstrap.js"></script>
+	<script src="${pageContext.request.contextPath }/static/lib/index.js"></script>
+	<script type="text/javascript">
+		$("[rel=tooltip]").tooltip();
+		$(function() {
+			loadingMethod('${pageContext.request.contextPath }');
+			$('.demo-cancel-click').click(function() {
+				return false;
+			});
+		});
+	</script>
+
+
+  </body>
+</html>
+
+

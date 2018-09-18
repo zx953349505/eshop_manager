@@ -1,0 +1,18 @@
+package eshop_manager.biz.impl;
+
+import java.util.List;
+
+import eshop_manager.biz.AdBiz;
+import eshop_manager.dao.AdMapper;
+import eshop_manager.entity.AdInfo;
+import eshop_manager.util.DaoProxy;
+
+public class AdBizImpl implements AdBiz {
+	private AdMapper adMapper=(AdMapper) DaoProxy.getInstance(AdMapper.class);
+	@Override
+	public List<AdInfo> selectAdInfo() {
+		// TODO Auto-generated method stub
+		return adMapper.selectAdInfo();
+	}
+
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.UserMapper">
+	
+	<!-- 开启本mapper下的二级缓存 -->
+	<cache/>
+	
+	<sql id="selectUserC">
+		SELECT count(*) FROM tb_user
+	</sql>
+	<sql id="selectUser">
+		select user_name,user_email,user_sex,is_activated from tb_user
+	</sql>
+	
+	
+	<select id="selectUserCount" resultType="int">
+		<include refid="selectUserC"/>
+	</select>
+	<select id="selectOnlineUser" resultType="int">
+		<include refid="selectUserC"/>
+		where is_online=1
+	</select>
+	<select id="selectUserList" resultType="UserInfo">
+		<include refid="selectUser"></include> 
+		ORDER BY time desc limit 5
+	</select>
+	
+	<select id="selectAllUserList" resultType="UserInfo">
+		SELECT user_id, user_name, user_email, user_sex, user_phone, is_activated, is_online, time FROM tb_user
+	</select>
+	
+	<select id="totalUserInfoCount" resultType="int">
+		SELECT COUNT(user_id) FROM tb_user
+	</select>
+
+</mapper>

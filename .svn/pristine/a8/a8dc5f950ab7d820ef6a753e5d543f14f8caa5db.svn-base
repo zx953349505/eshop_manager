@@ -1,0 +1,72 @@
+package eshop_manager.controller;
+
+import java.util.List;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import eshop_manager.biz.UserBiz;
+import eshop_manager.biz.impl.UserBizImpl;
+import eshop_manager.entity.UserInfo;
+
+@Controller
+@RequestMapping("/user")
+public class UserController {
+	private UserBiz userBiz=new UserBizImpl();
+	
+	@RequestMapping("/selectAllCount")	
+	public @ResponseBody String selectAllCount()throws Exception{
+		JSONObject jo=new JSONObject();
+		int count=userBiz.selectUserCount();
+		jo.put("count", count);
+		return jo.toString();
+	}
+	@RequestMapping("/selectOnlineCount")	
+	public @ResponseBody String selectOnlineCount()throws Exception{
+		JSONObject jo=new JSONObject();
+		int count=userBiz.selectOnlineUser();
+		jo.put("count", count);
+		return jo.toString();
+	}
+	@RequestMapping("/selectAllUser")	
+	public @ResponseBody String selectAllUser()throws Exception{
+		JSONObject jo=new JSONObject();
+		List<UserInfo> userList=userBiz.selectUserList();
+		jo.put("userList", userList);
+		return jo.toString();
+	}
+	
+	@RequestMapping("/selectAllUserList")
+	public ModelAndView selectAllUserList(
+			@RequestParam(value="keyWord",required=false) String keyWord ,
+			@RequestParam(value="is_activated",required=false) Integer isActivated ,
+			@RequestParam(value="date",required=false) String regDate ,
+			@RequestParam(value="currentPage",required=false,defaultValue="1") int currentPage
+			)throws Exception{
+		
+		ModelAndView model=new ModelAndView();
+		
+		int pageSize=10;
+		List<UserInfo> allUserList=userBiz.selectAllUserList(keyWord,regDate,isActivated,currentPage,pageSize);
+		int toatalInfoCount=userBiz.totalUserInfoCount(keyWord,regDate,isActivated);		
+		int totalPage=toatalInfoCount % pageSize == 0 ? toatalInfoCount / pageSize : toatalInfoCount / pageSize + 1;
+		model.addObject("keyWord", keyWord);
+		model.addObject("regDate", regDate);
+		model.addObject("isActivated", isActivated);
+		model.addObject("currentPage", currentPage);		
+		model.addObject("toatalInfoCount", toatalInfoCount);
+		model.addObject("totalPage", totalPage);
+		
+		model.addObject("allUserList", allUserList);
+		
+		model.setViewName("users");
+
+		return model;
+	}
+	
+}

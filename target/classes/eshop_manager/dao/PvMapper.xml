@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.PvMapper">
+
+	<!-- 开启本mapper下的二级缓存 
+	<cache/>-->
+	<select id="selectPvCount"  resultType="int">
+		select count(*) from tb_pv where DATE_FORMAT(time,'%Y%m')=DATE_FORMAT(NOW(),'%Y%m')
+	</select>
+</mapper>

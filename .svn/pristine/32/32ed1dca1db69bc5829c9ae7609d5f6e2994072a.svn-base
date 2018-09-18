@@ -1,0 +1,30 @@
+package eshop_manager.biz.impl;
+
+import java.util.List;
+
+import eshop_manager.biz.AddressBiz;
+import eshop_manager.dao.AddressMapper;
+import eshop_manager.entity.AddressInfo;
+import eshop_manager.util.DaoProxy;
+
+
+public class AddressBizImpl implements AddressBiz {
+
+	AddressMapper addressMapper=(AddressMapper) DaoProxy.getInstance(AddressMapper.class);
+	
+	public List<AddressInfo> provinceList() {
+		
+		return addressMapper.selectProvinceList();
+	}
+
+	public List<AddressInfo> cityList(String provinceid) {
+		
+		return addressMapper.selectCityList(provinceid);
+	}
+
+	public List<AddressInfo> areaList(String cityid) {
+		
+		return addressMapper.selectAreaList(cityid);
+	}
+
+}

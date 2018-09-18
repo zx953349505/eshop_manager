@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <!--加载properties属性  -->
+	<properties resource="/db.properties">
+	</properties>
+	<!-- 全局配置 -->
+	<settings>
+		<!-- 开启懒加载模式 -->
+		<setting name="lazyLoadingEnabled" value="true"/>
+		<!-- 取消积极加载 -->
+		<setting name="aggressiveLazyLoading" value="false"/>
+		
+		<!-- 开启二级缓存 -->
+		<setting name="cacheEnabled" value="true"/>
+	</settings>
+	<!-- <typeAliases>
+		<package name="eshop_manager.entity"/>
+	</typeAliases> -->
+	<!-- 配置数据源环境，可以配置多个环境....  -->
+	<environments default="development">
+	
+		<!-- 配置环境1,测试服务器的mysql数据库 -->
+		<environment id="development">
+			<!-- 使用jdbc事务管理-->
+			<transactionManager type="JDBC" />
+			<!-- 数据源（type=pooled，代表使用数据库连接池）-->
+			<dataSource type="POOLED">
+				<property name="driver" value="${driverClassName}"/>
+				<property name="url" value="${url}"/>
+				<property name="username" value="${username}"/>
+				<property name="password" value="${password}"/>
+			</dataSource>
+		</environment>
+		
+		<!-- 配置环境2,线上服务器的mysql数据库 -->
+		<environment id="development2">
+			<!-- 使用jdbc事务管理-->
+			<transactionManager type="JDBC" />
+			<!-- 数据库连接池-->
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver"/>
+				<property name="url" value="jdbc:mysql://172.10.11.12:3306/eshop?characterEncoding=utf-8"/>
+				<property name="username" value="root"/>
+				<property name="password" value="123456789"/>
+			</dataSource>
+		</environment>
+		
+	</environments>
+	
+	
+	
+	<mappers>
+		<package name="eshop_manager.dao"/>
+	</mappers>
+	
+	
+	
+	
+</configuration>

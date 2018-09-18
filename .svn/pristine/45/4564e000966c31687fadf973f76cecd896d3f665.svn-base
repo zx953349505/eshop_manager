@@ -1,0 +1,15 @@
+package eshop_manager.biz;
+
+public interface OrderBiz {
+	/**
+	 * 根据条件查询订单数
+	 * @param user_id
+	 * @return
+	 */
+	int selectOrderList(Integer status_pay,Integer status_send,Integer status_receive,Integer status);
+	/**
+	 * 查询本月营业额
+	 * @return
+	 */
+	double selectOrderPrice();
+}

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.BookMapper">
+
+	<!-- 开启本mapper下的二级缓存 -->
+	<cache/>
+	<sql id="selectBookWhere">
+		<where>
+			<if test="book_name!=null and book_name!=''">
+				<bind name="newbook_name" value="'%'+book_name+'%'"/>
+				and book_name like #{newbook_name}
+			</if>
+			<if test="book_author!=null and book_author!=''">
+				<bind name="newbook_author" value="'%'+book_author+'%'"/>
+				and book_author like #{newbook_author}
+			</if>
+			<if test="status!=-1">
+				and status=#{status}
+			</if>
+			<if test="type_id!=-1">
+				and (t1.type_id=#{type_id} or t1.type_id in (select t3.type_id from tb_type t3 where parent_id=#{type_id}) )
+			</if>
+		</where>
+	</sql>
+	<resultMap type="BookInfo" id="book">
+		<id column="book_id" property="book_id"/>
+		<result column="book_name" property="book_name"/>
+		<result column="book_author" property="book_author"/>
+		<result column="book_price" property="book_price"/>
+		<result column="status" property="status"/>
+		<result column="is_new" property="is_new"/>
+		<result column="is_hot" property="is_hot"/>
+		<result column="type_id" property="type_id"/>
+		<result column="store_count" property="store_count"/>
+		<association property="typeInfo" javaType="TypeInfo" >
+			<id column="type_id" property="type_id" /> 
+			<result column="type_name" property="type_name" />
+		</association>
+	</resultMap>
+	<select id="selectBookByTypeID" resultMap="book" parameterType="map">
+		SELECT t1.book_id,t1.book_name,t1.book_author,t1.book_price,t1.status,t1.is_new,t1.is_hot,t1.type_id,t1.store_count,t2.type_name
+		FROM tb_book t1 inner join tb_type t2 on t1.type_id=t2.type_id
+		<include refid="selectBookWhere" />
+		limit #{currentPage},#{pageSize}
+	</select>
+	
+	<select id="selectTotalCount" resultType="int" parameterType="map">
+		select count(*) from tb_book t1
+		<include refid="selectBookWhere" />
+	</select>
+</mapper>

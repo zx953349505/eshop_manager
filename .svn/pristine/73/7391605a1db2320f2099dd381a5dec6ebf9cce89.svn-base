@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.PermissionMapper">
+
+	<!-- 开启本mapper下的二级缓存
+	<cache/> -->
+	<select id="selectPerList" resultType="PermissionInfo">
+		select * from tb_permission
+	</select>
+	<insert id="addPer" parameterType="string">
+		insert into tb_permission(permission_name) values(#{permission_name})
+	</insert>
+	<delete id="deletePer" parameterType="int">
+		delete from tb_permission where permission_id=#{id}
+	</delete>
+	<select id="selectRolePer" parameterType="int" resultType="int">
+		select permission_id from tb_role_permission where role_id =#{id}
+	</select>
+</mapper>

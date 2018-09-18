@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.TypeMapper">
+	
+	<!-- 开启本mapper下的二级缓存 -->
+	<cache/>
+	
+	<select id="selectTypeAll" resultType="eshop_manager.entity.TypeInfo" >
+		SELECT * FROM TB_TYPE WHERE PARENT_ID=0 ORDER BY TYPE_ID
+	</select>
+	
+	<select id="selectType" resultType="eshop_manager.entity.TypeInfo" >
+		SELECT * FROM TB_TYPE 
+	</select>
+	
+	<select id="selectChildTypeAll" resultType="eshop_manager.entity.TypeInfo" >
+		SELECT * FROM tb_type WHERE parent_id>0 
+	</select>
+	
+</mapper>

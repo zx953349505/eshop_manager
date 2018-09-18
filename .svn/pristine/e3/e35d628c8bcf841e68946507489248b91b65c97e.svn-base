@@ -1,0 +1,14 @@
+package eshop_manager.test;
+
+import org.apache.ibatis.session.SqlSession;
+import org.junit.Test;
+
+import eshop_manager.util.MySqlSessionFactory;
+
+public class DaoProxyTest {
+	@Test
+	public void test1(){
+		SqlSession session = MySqlSessionFactory.getInstance().getFactory().openSession();
+		System.out.println(session);
+	}
+}

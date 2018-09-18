@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.UserMapper">
+	
+	<!-- 开启本mapper下的二级缓存 -->
+	<cache/>
+	
+	<sql id="selectUserC">
+		SELECT count(*) FROM tb_user
+	</sql>
+	<sql id="selectUser">
+		select user_name,user_email,user_sex,is_activated from tb_user
+	</sql>
+	<sql id="selectUser_where">
+		<where>
+			<if test="keyWord!=null and keyWord!=''">
+				<bind name="keyWord_new" value="'%'+keyWord+'%'"/>
+				AND (user_name LIKE #{keyWord_new}
+				OR user_email LIKE #{keyWord_new} 
+				OR user_sex LIKE #{keyWord_new} 
+				OR user_phone LIKE #{keyWord_new})
+			</if>
+			<if test="regDate!=null and regDate!=''">
+				AND time=#{regDate}
+			</if>
+			<if test="is_activated!=null">
+				AND is_activated=#{isActivated}
+			</if>		
+		</where>
+	</sql>
+	
+	
+	<select id="selectUserCount" resultType="int">
+		<include refid="selectUserC"/>
+	</select>
+	<select id="selectOnlineUser" resultType="int" useCache="false">
+		<include refid="selectUserC"/>
+		where is_online=1
+	</select>
+	<select id="selectUserList" resultType="UserInfo">
+		<include refid="selectUser"></include> 
+		ORDER BY time desc limit 5
+	</select>
+	
+	<select id="selectAllUserList" resultType="UserInfo" parameterType="map" useCache="false">
+		SELECT user_id, user_name, user_email, user_sex, user_phone, is_activated, is_online, time FROM tb_user
+		<include refid="selectUser_where"/>
+		ORDER BY user_id LIMIT #{start},#{pageSize}
+	</select>
+	
+	<select id="totalUserInfoCount" resultType="int" parameterType="map">
+		SELECT COUNT(user_id) FROM tb_user
+		<include refid="selectUser_where"/>
+	</select>
+
+</mapper>

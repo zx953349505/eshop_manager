@@ -1,0 +1,48 @@
+package eshop_manager.biz.impl;
+
+import java.util.List;
+
+import eshop_manager.biz.UserBiz;
+import eshop_manager.dao.UserMapper;
+import eshop_manager.entity.UserInfo;
+import eshop_manager.util.DaoProxy;
+
+
+public class UserBizImpl implements UserBiz{
+	
+	private UserMapper userDao=(UserMapper) DaoProxy.getInstance(UserMapper.class);
+
+	@Override
+	public int selectUserCount() {
+		// TODO Auto-generated method stub
+		return userDao.selectUserCount();
+	}
+
+	@Override
+	public int selectOnlineUser() {
+		// TODO Auto-generated method stub
+		return userDao.selectOnlineUser();
+	}
+
+	@Override
+	public List<UserInfo> selectUserList() {
+		// TODO Auto-generated method stub
+		return userDao.selectUserList();
+	}
+
+	@Override
+	public List<UserInfo> selectAllUserList() {
+		// TODO Auto-generated method stub
+		return userDao.selectAllUserList();
+	}
+
+	@Override
+	public int totalUserInfoCount() {
+		
+		return userDao.totalUserInfoCount();
+	}
+	
+	
+	
+
+}

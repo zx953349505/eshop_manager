@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd 
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-3.2.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-3.2.xsd" >
+		
+		
+		<!-- 加载属性文件 -->
+		<!--  <context:property-placeholder location="classpath:db.properties" /> -->
+		<!-- 扫描注解 -->
+		<context:component-scan base-package="eshop_manager"></context:component-scan>
+		
+		
+		<!-- 管理连接池(包含数据源) -->
+		<!-- dbcp连接池 -->
+		
+		<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+			<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+			<property name="url" value="jdbc:mysql://182.61.16.181:3306/eshop?useUnicode=true&amp;characterEncoding=utf8"></property>
+			<property name="username" value="root"></property>
+			<property name="password" value="root"></property>
+		</bean>
+		
+		
+		<!-- c3p0连接池 -->
+		<!--  
+		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+			<property name="driverClass" value="${eshop.driverClassName}"></property>
+			<property name="jdbcUrl" value="${eshop.url}"></property>
+			<property name="user" value="${eshop.username}"></property>
+			<property name="password" value="${eshop.password}"></property>
+		</bean>
+		-->
+		
+		<!-- 管理SQLSessionFactory -->
+		<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+			<property name="dataSource" ref="dataSource"></property>
+		</bean>
+		
+		
+		<!-- 管理Dao -->
+		<!-- 1、提供了Mybatis的动态代理类 -->
+		<!-- 2 、注册了dao层的所有的bean -->
+		<!-- 自动扫描生成出来的mapper的bean id是它的类名（首字母小写） -->
+		<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+			<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+			<property name="basePackage" value="eshop_manager.dao"></property>
+		</bean>
+		
+		
+		
+		
+		<!-- 管理biz -->
+		<bean id="bookBiz" class="eshop_manager.biz.impl.BookBizImpl" />
+		<bean id="adBiz" class="eshop_manager.biz.impl.AdBizImpl" />
+		<bean id="addressBizImpl" class="eshop_manager.biz.impl.AddressBizImpl" />
+		<bean id="ipBiz" class="eshop_manager.biz.impl.IpBizImpl" />
+		<bean id="managerBiz" class="eshop_manager.biz.impl.ManagerBizImpl" />
+		<bean id="orderBiz" class="eshop_manager.biz.impl.OrderBizImpl" />
+		<bean id="permissionBiz" class="eshop_manager.biz.impl.PermissionBizImpl" />
+		<bean id="promotionBiz" class="eshop_manager.biz.impl.PromotionBizImpl" />
+		<bean id="pvBiz" class="eshop_manager.biz.impl.PvBizImpl" />
+		<bean id="questionBiz" class="eshop_manager.biz.impl.QuestionBizimpl" />
+		<bean id="roleBiz" class="eshop_manager.biz.impl.RoleBizImpl" />
+		<bean id="typeBiz" class="eshop_manager.biz.impl.TypeBizImpl" />
+		<bean id="userBiz" class="eshop_manager.biz.impl.UserBizImpl" />
+		
+		<!--配置事物管理器  -->
+		<bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transaction">
+			<property name="dataSource" ref="dataSource" />
+		</bean>
+		<!-- 开启事物注解扫描 -->
+		<tx:annotation-driven transaction-manager="transaction"/>
+		
+</beans>

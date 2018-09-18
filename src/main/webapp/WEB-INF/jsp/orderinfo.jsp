@@ -1,0 +1,283 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>    
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>eshop商城</title>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/static/lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/static/stylesheets/theme.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath }/static/lib/font-awesome/css/font-awesome.css">
+    <script src="${pageContext.request.contextPath }/static/lib/jquery-1.7.2.min.js" type="text/javascript"></script>
+    
+    <!-- Demo page code -->
+
+    <style type="text/css">
+        #line-chart {
+            height:300px;
+            width:800px;
+            margin: 0px auto;
+            margin-top: 1em;
+        }
+        .brand { font-family: georgia, serif; }
+        .brand .first {
+            color: #ccc;
+            font-style: italic;
+        }
+        .brand .second {
+            color: #fff;
+            font-weight: bold;
+        }
+    </style>
+    
+    <link rel="shortcut icon" href="${pageContext.request.contextPath }/assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="${pageContext.request.contextPath }/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="${pageContext.request.contextPath }/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="${pageContext.request.contextPath }/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="${pageContext.request.contextPath }/assets/ico/apple-touch-icon-57-precomposed.png">
+  </head>
+  
+  <body class=""> 
+  
+ 	<c:import url="/framework"></c:import>
+    
+	<div class="content">
+		<div class="header">
+			<h1 class="page-title">订单管理</h1>
+		</div>
+
+		<ul class="breadcrumb">
+			<li><a href="ordermanager.jsp">订单管理</a> <span class="divider">/</span></li>
+			<li><a href="ordermanager.jsp">订单列表</a> <span class="divider">/</span></li>
+			<li class="active">查看订单信息</li>
+		</ul>
+
+
+
+		<div class="container-fluid">
+			
+			<!-- 基本信息 -->
+			<div class="row-fluid">
+				<div class="block">
+					<a href="#page-basic" class="block-heading" data-toggle="collapse">基本信息</a>
+					<div id="page-basic" class="block-body collapse in">
+						<table class="table table-striped table-hover table-bordered">
+								<tbody>
+									<tr>
+										<td style="text-align:right;font-weight:bold;">订单号：</td>
+										<td>${requestScope.orderInfo.order_id }</td>
+										<td style="text-align:right;font-weight:bold;">订单状态：</td>
+										<td>正常,已付款,未发货,未收货	</td>
+									</tr>
+									<tr>
+										<td style="text-align:right;font-weight:bold;">购货人：</td>
+										<td>${requestScope.orderInfo.userInfo.user_name }</td>
+										<td style="text-align:right;font-weight:bold;">下单时间：</td>
+										<td>${requestScope.orderInfo.order_date }</td>
+									</tr>
+									<tr>
+										<td style="text-align:right;font-weight:bold;">支付方式：</td>
+										<td>网银在线</td>
+										<td style="text-align:right;font-weight:bold;">付款时间：</td>
+										<td>${requestScope.orderInfo.pay_time }</td>
+									</tr>
+									<tr>
+										<td style="text-align:right;font-weight:bold;">发货单号：</td>
+										<td></td>
+										<td style="text-align:right;font-weight:bold;">发货时间：</td>
+										<td></td>
+									</tr>
+								</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+			<!-- 收货人信息 -->
+			<div class="row-fluid">
+				<div class="block">
+					<a href="#page-address" class="block-heading" data-toggle="collapse">收货人信息</a>
+					<div id="page-address" class="block-body collapse in">
+						<table class="table table-striped table-hover table-bordered">
+								<tbody>
+									<tr>
+										<td style="text-align:right;font-weight:bold;">收货人：</td>
+										<td>${requestScope.orderInfo.person }</td>
+										<td style="text-align:right;font-weight:bold;">电话：</td>
+										<td>${requestScope.orderInfo.phone }</td>
+									</tr>
+									<tr>
+										<td style="text-align:right;font-weight:bold;">地址：</td>
+										<td colspan="3">${requestScope.orderInfo.address }</td>
+									</tr>
+								</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+			<!-- 商品信息 -->
+			<div class="row-fluid">
+				<div class="block">
+					<a href="#page-goods-list" class="block-heading" data-toggle="collapse">商品信息</a>
+					<div id="page-goods-list" class="block-body collapse in">
+						<table class="table table-striped table-hover table-bordered">
+								<thead>
+									<tr>
+										<th>商品名称</th>
+										<th>价格</th>
+										<th>数量</th>
+										<th>库存</th>
+										<th>小计</th>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<c:forEach items="${requestScope.orderInfo.orderDetailInfoList }" var="orderDetailInfo">
+										<tr>
+											<td>
+												<a href="http://127.0.0.1/eshop/book/bookInfo.action?book_id=${orderDetailInfo.bookInfo.book_id }" target="_blank">
+												${orderDetailInfo.bookInfo.book_name }</a>
+											</td>
+											<td>¥${orderDetailInfo.bookInfo.book_price }</td>
+											<td>${orderDetailInfo.num }</td>
+											<td>${orderDetailInfo.bookInfo.store_count }</td>
+											<c:set var="sum">
+												<fmt:formatNumber pattern="0.00">
+													${orderDetailInfo.bookInfo.book_price*orderDetailInfo.num }
+												</fmt:formatNumber>
+											</c:set>
+											<td>¥${sum }元</td>
+										</tr>
+										<c:set var="totalMoney">
+											${totalMoney+sum }
+										</c:set>
+									</c:forEach>
+								</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+			<!-- 费用信息 -->
+			<div class="row-fluid">
+				<div class="block">
+					<a href="#page-money" class="block-heading" data-toggle="collapse">费用信息</a>
+					<div id="page-money" class="block-body collapse in">
+						<div class="search-well">
+						<form class="form-inline" role="search" action="#" method="post">
+								<strong>商品总金额：¥${totalMoney }</strong><br>
+								<strong>运费：¥0.00</strong><br>
+								<strong style="color: red">总计：¥${totalMoney }</strong>
+						</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<!-- 可执行操作 -->
+			<div class="row-fluid">
+				<div class="block">
+					<a href="#page-filter" class="block-heading" data-toggle="collapse">当前可执行操作</a>
+					<div id="page-filter" class="block-body collapse in">
+						<div class="search-well">
+							<form class="form-inline" role="search" action="#" method="post">
+			                		
+			                			<!-- 待发货 -->
+			                			<button type="button" class="btn btn-default" onclick="javascript:location.href='/EShopManager/orders/infoenter.action?order_id=1534211972456';">发货</button>
+			                			<button type="submit" class="btn btn-default">设置为未付款</button>
+			                			<button type="submit" class="btn btn-default">取消订单</button>
+							</form>
+						</div>
+						
+						<table class="table table-striped table-hover table-bordered">
+								<thead>
+									<tr>
+										<th>操作者</th>
+										<th>操作时间</th>
+										<th>订单状态</th>
+										<th>付款状态</th>
+										<th>发货状态</th>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<tr>
+										<td>买家(${requestScope.orderInfo.userInfo.user_name })</td>
+										<td>${requestScope.orderInfo.order_date }</td>
+										<td>
+											<c:if test="${requestScope.orderInfo.status==1 }">
+												订单正常
+											</c:if>
+											<c:if test="${requestScope.orderInfo.status==-1 }">
+												订单取消
+											</c:if>
+										</td>
+										<td>
+										<c:if test="${requestScope.orderInfo.status==1 }">
+											<c:if test="${requestScope.orderInfo.status_pay==1 }">
+												已付款
+											</c:if>
+											<c:if test="${requestScope.orderInfo.status_pay==0 }">
+												未付款
+											</c:if>
+										</c:if>
+										<c:if test="${requestScope.orderInfo.status==-1 }">
+												未付款											
+										</c:if>
+										</td>										
+										<td>
+										<c:if test="${requestScope.orderInfo.status==1
+													&&requestScope.orderInfo.status_pay==1
+													&&requestScope.orderInfo.status_send==1 }">
+											已收货
+										</c:if>
+										<c:if test="${requestScope.orderInfo.status==1
+													&&requestScope.orderInfo.status_pay==1
+													&&requestScope.orderInfo.status_send==0 }">
+											未收货
+										</c:if>
+										</td>
+									</tr>
+								</tbody>
+						</table>
+						
+					</div>
+				</div>
+			</div>
+
+				<footer>
+					<hr>
+					<!-- Purchase a site license to remove this link from the footer: http://www.portnine.com/bootstrap-themes -->
+					<p class="pull-right">
+						Collect from <a href="http://www.iyunhe.com/" target="_blank">云和数据</a>
+					</p>
+
+					<p>
+						copyright © 2013-2016 河南云和数据信息技术有限公司深圳分公司&nbsp; <a href="http://www.iyunhe.com/" title="河南云和数据信息技术有限公司深圳分公司" target="_blank">首页</a>
+					</p>
+				</footer>
+
+
+
+		</div>
+
+	</div>
+	
+    <script src="${pageContext.request.contextPath }/static/lib/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript">
+        $("[rel=tooltip]").tooltip();
+        $(function() {
+            $('.demo-cancel-click').click(function(){return false;});            
+        });
+    </script>
+    
+  </body>
+</html>

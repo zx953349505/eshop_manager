@@ -1,0 +1,54 @@
+package eshop_manager.controller;
+
+import java.util.List;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import eshop_manager.biz.ManagerBiz;
+import eshop_manager.biz.PermissionBiz;
+import eshop_manager.entity.ManagerInfo;
+import eshop_manager.util.MyAnnotation.CheckLoginRequired;
+
+@Controller
+public class FrameWorkController {
+	@Autowired
+	private ManagerBiz managerBiz;
+	@Autowired
+	private PermissionBiz permissionBiz;
+	@RequestMapping("framework")
+	@CheckLoginRequired
+	public ModelAndView framework(HttpServletRequest request)throws Exception{
+		ModelAndView model=new ModelAndView();
+		ManagerInfo managerInfo = (ManagerInfo) request.getSession().getAttribute("managerInfo");
+		if(managerInfo==null){
+			// 去cookie去找userId
+			String manager_id = null;
+			Cookie[] cookieArray = request.getCookies();
+			if (cookieArray != null) {
+				for (Cookie cookie : cookieArray) {
+					if ("manager_id".equals(cookie.getName())) {// 筛选出了“userID”这个cookie对象
+						manager_id = cookie.getValue();
+						// userId=URLDecoder.decode(cookie.getValue(),
+						// "UTF-8");设置取出编码格式
+						break;
+					}
+				}
+			}
+
+			if (manager_id != null) {// cookie有用户对象
+				managerInfo=managerBiz.selectManById(Integer.parseInt(manager_id));
+				request.getSession().setAttribute("managerInfo", managerInfo);
+			} 
+		}
+		List<Integer> perList=permissionBiz.selectRolePer(managerInfo.getManager_role());
+		model.addObject("perList", perList);
+		model.setViewName("framework");
+		return model;
+	}
+}

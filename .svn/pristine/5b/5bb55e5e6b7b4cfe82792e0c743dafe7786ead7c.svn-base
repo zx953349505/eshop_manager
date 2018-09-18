@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="eshop_manager.dao.AddressMapper">
+	
+	
+	<select id="selectProvinceList" resultType="AddressInfo" >
+		SELECT provinceid id, province name FROM provinces
+	</select>
+
+	<select id="selectCityList" resultType="AddressInfo" parameterType="string">
+		SELECT cityid id, city name FROM cities WHERE provinceid=#{provinceId}
+	</select>
+	
+	<select id="selectAreaList" resultType="AddressInfo" parameterType="string">
+		SELECT areaid id, area name FROM areas WHERE cityid=#{cityId}
+	</select>
+	
+	
+</mapper>

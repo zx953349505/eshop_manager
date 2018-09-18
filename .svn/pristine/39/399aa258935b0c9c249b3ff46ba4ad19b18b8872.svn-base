@@ -1,0 +1,52 @@
+package eshop_manager.controller;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import eshop_manager.biz.OrderBiz;
+import eshop_manager.biz.impl.OrderBizImpl;
+
+@Controller
+@RequestMapping("/order")
+public class OrderController {
+	private OrderBiz orderBiz=new OrderBizImpl();
+	
+	@RequestMapping("/selectSendOrder")	
+	public @ResponseBody String selectSendOrder()throws Exception{		
+		JSONObject jo=new JSONObject();
+		int count=orderBiz.selectOrderList(1, 0, 0, 1);
+		jo.put("count", count);
+		return jo.toString();
+	}
+	@RequestMapping("/selectPayOrder")	
+	public @ResponseBody String selectPayOrder()throws Exception{
+		JSONObject jo=new JSONObject();
+		int count=orderBiz.selectOrderList(0, 0, 0, 1);
+		jo.put("count", count);
+		return jo.toString();
+	}
+	@RequestMapping("/selectCompleteOrder")	
+	public @ResponseBody String selectCompleteOrder()throws Exception{
+		JSONObject jo=new JSONObject();
+		int count=orderBiz.selectOrderList(1, 1, 1, 1);
+		jo.put("count", count);
+		return jo.toString();
+	}
+	@RequestMapping("/selectCancelOrder")	
+	public @ResponseBody String selectCancelOrder()throws Exception{
+		JSONObject jo=new JSONObject();
+		int count=orderBiz.selectOrderList(1, 1, 1, 0);
+		jo.put("count", count);
+		return jo.toString();
+	}
+	@RequestMapping("/selectSale")	
+	public @ResponseBody String selectSale()throws Exception{
+		JSONObject jo=new JSONObject();
+		double sum=orderBiz.selectOrderPrice();
+		jo.put("sum", sum);
+		return jo.toString();
+	}
+}
